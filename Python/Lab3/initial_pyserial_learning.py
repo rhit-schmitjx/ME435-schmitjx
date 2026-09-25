@@ -19,4 +19,5 @@ print(response_bytes)
 response = response_bytes.decode().strip()
 print(response)
 
+
 ser.close()
