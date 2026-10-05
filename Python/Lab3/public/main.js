@@ -38,15 +38,15 @@ function main(){
         sendCommand("GRIPPER OPEN");
     };
     document.querySelector("#gclose").onclick = () => {
-        sendCommand("GRIPPER CLOSED");
+        sendCommand("GRIPPER CLOSE");
     };
     document.querySelector("#Status").onclick = () => {
-        sendCommand("LOADER STATUS");
+        sendCommand("LOADER_STATUS");
     };
     document.querySelector("#zExtend").onclick = () => {
         sendCommand("Z-AXIS EXTEND");
     };
-    document.querySelector("#zRectract").onclick = () => {
+    document.querySelector("#zRetract").onclick = () => {
         sendCommand("Z-AXIS RETRACT");
     };
     document.querySelector("#Move").onclick = () => {
