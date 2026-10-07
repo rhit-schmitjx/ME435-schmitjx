@@ -28,4 +28,5 @@ def handle_Flash_commands(numFlashes, timeDelay):
 if __name__ == "__main__":
     print("Running Flask!")
     app.run(host='0.0.0.0', port=5000, use_reloader=False) # use_reloader=False
+    print("Hi")
 
