@@ -7,9 +7,6 @@ void setup() {
   // reserve 200 bytes for the inputString:
   inputString.reserve(200);
   pinMode(13,OUTPUT);
-  Serial.println();
-  Serial.println();
-  Serial.println();
 
 }
 
@@ -38,13 +35,15 @@ void loop() {
       // Serial.print(String(numFlashes));
       // Serial.print(String(timeDelay));
       
-      for (int i = 0; i < count; i++) {
+      for (int i = 0; i < numFlashes; i++) {
         digitalWrite(13, HIGH);
-        delay(delayMs);
+        delay(timeDelay);
         digitalWrite(13, LOW);
-        delay(delayMs);
-     }
-     else{
+        delay(timeDelay);
+        }
+
+      Serial.println("Flashed " + String(numFlashes) + " times with " + String(timeDelay) + " ms delay");
+     }else{
        Serial.print("Unkown command -->");
        Serial.println(inputString);
     }
