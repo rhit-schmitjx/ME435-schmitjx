@@ -3,7 +3,7 @@ import time
 
 
 class LEDOnOff:
-    def __init__(self, port="/dev/ttyACM1"):
+    def __init__(self, port="/dev/ttyACM0"):
         self.port = port
         self.ser = None
 
