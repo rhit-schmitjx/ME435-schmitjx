@@ -27,11 +27,11 @@ function main(){
 
     document.querySelector("#on").onclick = () => {
         console.log("LED On button pressed");
-        onOff("ON");
+        onOff("on");
     };
     document.querySelector("#off").onclick = () => {
         console.log("LED Off button pressed");
-        onOff("OFF");
+        onOff("off");
     };
     document.querySelector("#flash").onclick = () => {
         let numFlashes = document.querySelector("#numFlashes").value;
