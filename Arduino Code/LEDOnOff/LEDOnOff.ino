@@ -15,11 +15,11 @@ void loop() {
   if (isStringComplete) {
     
     //TODO: Do the command!
-    if(inputString.equals("LED ON")){
+    if(inputString.equals("LED on")){
       digitalWrite(13, HIGH);
       Serial.println("The LED is now on!");
     }
-    else if(inputString.equals("LED OFF")){
+    else if(inputString.equals("LED off")){
       digitalWrite(13, LOW);
       Serial.println("The LED is now off!");
     }
@@ -37,9 +37,9 @@ void loop() {
       
       for (int i = 0; i < numFlashes; i++) {
         digitalWrite(13, HIGH);
-        delay(timeDelay);
+        delay(timeDelay/2);
         digitalWrite(13, LOW);
-        delay(timeDelay);
+        delay(timeDelay/2);
         }
 
       Serial.println("Flashed " + String(numFlashes) + " times with " + String(timeDelay) + " ms delay");
