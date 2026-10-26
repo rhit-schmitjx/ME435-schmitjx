@@ -39,7 +39,7 @@ def main():
 
         pattern.clear()
 
-    play_button.when_pressed = play()
+    play_button.when_pressed = play
     signal.pause()
 
 if __name__ == "__main__":
