@@ -1,41 +1,32 @@
 from rosebot import Rosebot
 import time
+
 def main():
     print("Lab 5b Line Following")
     robot = Rosebot()
 
+    speed = 40
+    turn = 25
     try:
         while True:
-            # Get ultrasonic sensor
-            # if distance < 20 cm
-            #    stop the robot
-            # else
-            #    get the line sensor values
-            #    Adjust wheel speeds based on YOUR strategy
+            line_word = robot.line_sensors.get_line_word()
+            #straight
+            if line_word == "WBW" or line_word == "BBB":
+                robot.drive_system.set_speeds(speed, speed, speed, speed)
+            #go right
+            elif line_word == "BWW" or line_word == "BBW":
+                robot.drive_system.set_speeds(speed - turn, speed - turn, speed + turn, speed + turn)
+            # go left
+            elif line_word == "WWB" or line_word == "WBB":
+                robot.drive_system.set_speeds(speed + turn, speed + turn, speed - turn, speed - turn)
+            # stop
+            else:
+                robot.drive_system.set_speeds(0,0,0,0)
 
-
-
-            time.sleep(0.1)
 
     except KeyboardInterrupt:
-        # handle crtl-c to exit the program cleanly
         robot.drive_system.stop()
-        print("Goodbye!")
+        print("\nGoodbye!")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-main()
+if __name__ == "__main__":
+    main()
