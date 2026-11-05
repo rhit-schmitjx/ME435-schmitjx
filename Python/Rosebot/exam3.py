@@ -66,9 +66,12 @@ class App:
   def check_ultra(self):
     current_time = time.time()
     if current_time - self.last_ultra_time >= 2.0:
-      distance_cm = self.robot.ultrasonic.get_distance()
-      print(f"Ultra: {distance_cm}")
-      self.mqtt_client.send_message("ultra", distance_cm)
+      try:
+        distance_cm = self.robot.ultrasonic.get_distance()
+        print(f"Ultra: {distance_cm}")
+        self.mqtt_client.send_message("ultra", distance_cm)
+      except Exception:
+        print(f"No ultrasonic sensor")
       
       self.last_ultra_time = current_time
 
