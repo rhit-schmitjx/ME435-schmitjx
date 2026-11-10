@@ -34,13 +34,10 @@ class App:
                 self.robot.drive_system.go(20, 20)
             if self.mode == "none":
                 self.robot.drive_system.stop()
-        if message_type == "get_voltage":
-            raw_adc = self.robot.adc.read_adc(2)
-            multiplier = 3 if self.robot.adc.pcb_version == 1 else 2
-            voltage = round(raw_adc * multiplier, 2)
-            self.mqtt_client.send_message("voltage_reading", {
-                "voltage": voltage
-            })
+        if message_type == "led_mode":
+            self.led_mode = message_payload
+            if self.led_mode == "off":
+                self.robot.leds.colorBlink(0)
         
 
 
@@ -81,11 +78,18 @@ def main():
                     app.robot.buzzer.beep(on_time=0.1, off_time=0.1, n=3)
                     app.mode = "none"
 
-            time.sleep(1)
+            if app.led_mode == "rainbow":
+                app.robot.leds.rainbowCycle(20)
+            elif app.led_mode == "blink":
+                app.robot.leds.colorBlink(1)
+            elif app.led_mode == "breathing":
+                app.robot.leds.rainbowbreathing(10)
+            time.sleep(0.01)
 
     except KeyboardInterrupt:
         print("Goodbye!")
         app.robot.drive_system.stop()
+        app.robot.leds.colorBlink(0)
         app.mqtt_client.close()
 
 
