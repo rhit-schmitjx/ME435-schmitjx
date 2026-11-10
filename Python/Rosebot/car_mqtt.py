@@ -34,6 +34,14 @@ class App:
                 self.robot.drive_system.go(20, 20)
             if self.mode == "none":
                 self.robot.drive_system.stop()
+        if message_type == "get_voltage":
+            raw_adc = self.robot.adc.read_adc(2)
+            multiplier = 3 if self.robot.adc.pcb_version == 1 else 2
+            voltage = round(raw_adc * multiplier, 2)
+            self.mqtt_client.send_message("voltage_reading", {
+                "voltage": voltage
+            })
+        
 
 
 def main():
@@ -49,8 +57,6 @@ def main():
         while True:
             right_now = datetime.datetime.now()
             current_time_s = right_now.timestamp()
-
-
             # Strategy is to look at the clock, if two seconds have passed do something.
             if app.is_streaming and current_time_s > last_time_sent_s + 2.0:
                 app.mqtt_client.send_message("line_sensor_reading",{
@@ -66,24 +72,21 @@ def main():
                     app.robot.drive_system.stop()
                     app.robot.buzzer.beep(on_time=0.1, off_time=0.1, n=3)
                     app.mode = "none"
-            time.sleep(2)
+
+            if app.mode == "drive_until_line":
+                if (app.robot.line_sensors.get_left() == "B" or 
+                    app.robot.line_sensors.get_middle() == "B" or 
+                    app.robot.line_sensors.get_right() == "B"):
+                    app.robot.drive_system.stop()
+                    app.robot.buzzer.beep(on_time=0.1, off_time=0.1, n=3)
+                    app.mode = "none"
+
+            time.sleep(1)
 
     except KeyboardInterrupt:
         print("Goodbye!")
         app.robot.drive_system.stop()
         app.mqtt_client.close()
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

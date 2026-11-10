@@ -1,5 +1,6 @@
 import gpiozero as gz
 import time
+
 class Ultrasonic:
     def __init__(self):
         self.sensor = gz.DistanceSensor(echo=22, trigger=27)
@@ -36,6 +37,13 @@ class LineSensors:
         right = self.get_right()
         middle = self.get_middle()
         return f"{left}{middle}{right}"
+
+class ADC:
+    def __init__(self):
+        self.adc = gz.ADC()
+
+    def read_adc(self, channel):
+        return self.adc.read_adc(channel)
 
 if __name__ == "__main__":
     print("Quick dev testing for sensors!")
