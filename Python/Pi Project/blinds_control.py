@@ -4,6 +4,7 @@ import gpiozero as gz
 import mqtt_helper as mh
 import threading
 
+
 class App:
     def __init__(self):
         # Define GPIO Pins (BCM numbering) connected to ULN2003 IN1-IN4
@@ -27,12 +28,12 @@ class App:
         self.STEPS_PER_REV = 4096
 
         # Setup MQTT Client (which receives payloads from your bridge/Alexa)
-        self.mqtt_client = mh.MqttClient()
-        self.mqtt_client.connect(
-            subscription_topic_name="me435/schmitjx/#",
-            publish_topic_name="me435/schmitjx/to_computer"
-        )
-        self.mqtt_client.callback = self.mqtt_callback
+        # self.mqtt_client = mh.MqttClient()
+        # self.mqtt_client.connect(
+        #     subscription_topic_name="me435/schmitjx/#",
+        #     publish_topic_name="me435/schmitjx/to_computer"
+        # )
+        # self.mqtt_client.callback = self.mqtt_callback
 
     def set_pins(self, step):
         """Sets the GPIO pins according to the active step state."""

@@ -6,6 +6,7 @@ import json
 import paho.mqtt
 import paho.mqtt.client as mqtt
 
+
 class MqttClient(object):
   """Helper class to make it easier to work with MQTT subscriptions and publications."""
 
