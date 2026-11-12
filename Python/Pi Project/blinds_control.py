@@ -2,7 +2,9 @@ import time
 import sys
 import gpiozero as gz
 import mqtt_helper as mh
-import threadings
+import threading
+from datetime import datetime
+
 
 class App:
     def __init__(self):
@@ -26,13 +28,19 @@ class App:
         # The 28BYJ-48 with 1/64 gear reduction requires ~4096 half-steps per full 360-degree rotation.
         self.STEPS_PER_REV = 4096
 
+        # --- Alarm Settings ---
+        # Set your desired alarm time here (24-hour format: hour, minute)
+        self.alarm_hour = 17
+        self.alarm_minute = 59
+        self.alarm_triggered_today = False  # Prevents triggering multiple times in the same minute
+
         # Setup MQTT Client (which receives payloads from your bridge/Alexa)
-        self.mqtt_client = mh.MqttClient()
-        self.mqtt_client.connect(
-            subscription_topic_name="me435/schmitjx/#",
-            publish_topic_name="me435/schmitjx/to_computer"
-        )
-        self.mqtt_client.callback = self.mqtt_callback
+        # self.mqtt_client = mh.MqttClient()
+        # self.mqtt_client.connect(
+        #     subscription_topic_name="me435/schmitjx/#",
+        #     publish_topic_name="me435/schmitjx/to_computer"
+        # )
+        # self.mqtt_client.callback = self.mqtt_callback
 
     def set_pins(self, step):
         """Sets the GPIO pins according to the active step state."""
@@ -47,6 +55,10 @@ class App:
         self.IN2.off()
         self.IN3.off()
         self.IN4.off()
+
+    # Fixed method name mismatch from your original callback ("rotate_degrees" vs "rotate")
+    def rotate_degrees(self, degrees):
+        self.rotate(degrees)
 
     def rotate(self, degrees):
         """
@@ -69,6 +81,10 @@ class App:
         self.motor_off()
         print("---Done---")
 
+    def release_motor(self):
+        """Safely de-energize pins on exit."""
+        self.motor_off()
+
     def mqtt_callback(self, message_type, message_payload):
         print(f"Alexa Received! --> Type: {message_type} | Payload: {message_payload}")
         if message_type == "blinds":
@@ -76,6 +92,26 @@ class App:
                 self.rotate_degrees(90)
             elif message_payload == "close":
                 self.rotate_degrees(-90)
+
+    def alarm_checker(self):
+        """Background loop that checks the time every second against the alarm."""
+        print(f"Alarm clock set for {self.alarm_hour:02d}:{self.alarm_minute:02d}")
+        while True:
+            now = datetime.now()
+            
+            # Check if current time matches the alarm time
+            if now.hour == self.alarm_hour and now.minute == self.alarm_minute:
+                if not self.alarm_triggered_today:
+                    print(f"\n[ALARM] Wake up! Time is {now.strftime('%H:%M')}. Opening blinds...")
+                    self.rotate(90)
+                    self.alarm_triggered_today = True
+            else:
+                # Reset the trigger flag once the minute changes past the alarm time
+                if self.alarm_triggered_today:
+                    self.alarm_triggered_today = False
+                    
+            time.sleep(1)
+
     def terminal_listener(self):
         print("Commands:")
         print("  Type a degree number to move (e.g., '90', '-90', '45', '-180')")
@@ -84,7 +120,6 @@ class App:
         print("  'exit' -> Close program")
         print("------------------------------------------------------")
 
-        
         while True:
             command = input("\nEnter command: ")
             
@@ -107,9 +142,14 @@ def main():
     app = App()
 
     # Start the terminal input loop in a separate background thread
-    t = threading.Thread(target=app.terminal_listener, daemon=True)
-    t.start()
-    # Keep the main thread alive to listen for incoming MQTT/Alexa payloads
+    t_terminal = threading.Thread(target=app.terminal_listener, daemon=True)
+    t_terminal.start()
+
+    # Start the alarm clock checker loop in another background thread
+    t_alarm = threading.Thread(target=app.alarm_checker, daemon=True)
+    t_alarm.start()
+
+    # Keep the main thread alive to listen for incoming MQTT/alarm events
     try:
         while True:
             time.sleep(1)
