@@ -1,24 +1,31 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LedOnOff</title>
+    <title>Blinds & Alarm Control</title>
 </head>
 <body>
-    <!-- This is a comment. -->
-    <h1>Exam 1</h1>
-    <p>Server Response</p>
+    <h1>Blinds & Alarm Control</h1>
+    <p id="replyText">Ready</p>
     <hr>
    
-    <button id="on">LED On</button>
-    <button id="off">LED Off</button>
+    <h3>Manual Control</h3>
+    <button id="open">Open Blinds</button>
+    <button id="close">Close Blinds</button>
     <br><br>
 
-    <label>Flashes: </label>
-    <input type="number" value="1" id="numFlashes">
-    <input type="number" value="5" id="timeDelay">
-    <button id="flash">Flash</button>
+    <label>Custom Degrees: </label>
+    <input type="number" value="45" id="degreesInput">
+    <button id="rotateBtn">Rotate</button>
     <br><br>
+
+    <hr>
+    <h3>Alarm Schedule (24-Hour Format)</h3>
+    <label>Time: </label>
+    <input type="number" min="0" max="23" value="7" id="alarmHour" style="width: 50px;"> :
+    <input type="number" min="0" max="59" value="0" id="alarmMinute" style="width: 50px;">
+    <button id="setAlarmBtn">Set Alarm</button>
 
     <script src="main.js"></script>
 </body>
